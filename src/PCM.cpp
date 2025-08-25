@@ -27,6 +27,8 @@
  * @param taus: Vector specifying the time lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for simplex projection.
  * @param cumulate: Flag indicating whether to cumulatively incorporate control variables.
+ * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
+ * @param dist_average: Whether to average distance by the number of valid vector components.
  *
  * @return A std::vector<double> containing:
  *         - rho[0]: Pearson correlation between the target and its simplex projection.
@@ -41,43 +43,47 @@ std::vector<double> PartialSimplex4TS(
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
-    bool cumulate
-){
+    bool cumulate = false,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
   int n_controls = controls.size();
   std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
   if (cumulate) {
+    // Cumulative control embedding path
     std::vector<double> temp_pred;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
       if (i == 0){
-        temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0]);
+        temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], dist_metric, dist_average);
       } else {
-        temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i]);
+        temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i], dist_metric, dist_average);
       }
       temp_embedding = Embed(temp_pred,conEs[i],taus[i]);
     }
 
-    std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls]);
-    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0]);
+    std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls], dist_metric, dist_average);
+    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], dist_metric, dist_average);
 
     if (checkOneDimVectorNotNanNum(target_pred) >= 3){
       rho[0] = PearsonCor(target,target_pred,true);
       rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
     }
   } else {
+    // Independent control paths
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0]);
+      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], dist_metric, dist_average);
       temp_embedding = Embed(temp_pred,conEs[i],taus[i]);
-      temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1]);
+      temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1], dist_metric, dist_average);
       con_pred[i] = temp_pred;
     }
-    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0]);
+    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], dist_metric, dist_average);
 
     if (checkOneDimVectorNotNanNum(target_pred) >= 3){
       rho[0] = PearsonCor(target,target_pred,true);
@@ -106,6 +112,8 @@ std::vector<double> PartialSimplex4TS(
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for S-Map prediction.
  * @param theta: Weighting parameter for distances in S-Map.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
+ * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
+ * @param dist_average: Whether to average distance by the number of valid vector components.
  * @return A vector of size 2 containing:
  *         - rho[0]: Pearson correlation between the target and its predicted values.
  *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
@@ -119,44 +127,48 @@ std::vector<double> PartialSMap4TS(
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
-    double theta,
-    bool cumulate
-){
+    double theta = 1.0,
+    bool cumulate = false,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
   int n_controls = controls.size();
   std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
   if (cumulate){
+    // Cumulative control embedding path
     std::vector<double> temp_pred;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
       if (i == 0){
-        temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], theta);
+        temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], theta, dist_metric, dist_average);
       } else {
-        temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i], theta);
+        temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i], theta, dist_metric, dist_average);
       }
       temp_embedding = Embed(temp_pred,conEs[i],taus[i]);
     }
 
-    std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls], theta);
-    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta);
+    std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls], theta, dist_metric, dist_average);
+    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta, dist_metric, dist_average);
 
     if (checkOneDimVectorNotNanNum(target_pred) >= 3){
       rho[0] = PearsonCor(target,target_pred,true);
       rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
     }
   } else {
+    // Independent control paths
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], theta);
+      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], theta, dist_metric, dist_average);
       temp_embedding = Embed(temp_pred,conEs[i],taus[i]);
-      temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1], theta);
+      temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1], theta, dist_metric, dist_average);
       con_pred[i] = temp_pred;
     }
-    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta);
+    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta, dist_metric, dist_average);
 
     if (checkOneDimVectorNotNanNum(target_pred) >= 3){
       rho[0] = PearsonCor(target,target_pred,true);
@@ -185,6 +197,8 @@ std::vector<double> PartialSMap4TS(
  *   - threads: The number of threads to use for parallel processing.
  *   - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  *   - cumulate: Whether to accumulate partial correlations.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components.
  *
  * Returns:
  *   A vector of PartialCorRes objects, where each contains:
@@ -206,7 +220,9 @@ std::vector<PartialCorRes> PCMSingle(
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     size_t threads,                                     // Number of threads to use for parallel processing
     int parallel_level,                                 // Level of parallel computing: 0 for `lower`, 1 for `higher`
-    bool cumulate                                       // Whether to cumulate the partial correlations
+    bool cumulate,                                      // Whether to cumulate the partial correlations
+    int dist_metric,                                    // Distance metric selector (1: Manhattan, 2: Euclidean)
+    bool dist_average                                   // Whether to average distance by the number of valid vector components
 ) {
   int max_lib_size = lib_indices.size();
 
@@ -216,9 +232,9 @@ std::vector<PartialCorRes> PCMSingle(
     // Run partial cross map and store results
     std::vector<double> rho;
     if (simplex) {
-      rho = PartialSimplex4TS(x_vectors, y, controls, lib_indices, pred_indices, conEs, taus, b, cumulate);
+      rho = PartialSimplex4TS(x_vectors, y, controls, lib_indices, pred_indices, conEs, taus, b, cumulate, dist_metric, dist_average);
     } else {
-      rho = PartialSMap4TS(x_vectors, y, controls, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
+      rho = PartialSMap4TS(x_vectors, y, controls, lib_indices, pred_indices, conEs, taus, b, theta, cumulate, dist_metric, dist_average);
     }
     x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     return x_xmap_y;
@@ -253,9 +269,9 @@ std::vector<PartialCorRes> PCMSingle(
       // Run partial cross map and store results
       std::vector<double> rho;
       if (simplex) {
-        rho = PartialSimplex4TS(x_vectors, y, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, cumulate);
+        rho = PartialSimplex4TS(x_vectors, y, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, cumulate, dist_metric, dist_average);
       } else {
-        rho = PartialSMap4TS(x_vectors, y, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, theta, cumulate);
+        rho = PartialSMap4TS(x_vectors, y, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, theta, cumulate, dist_metric, dist_average);
       }
       // Directly initialize a PartialCorRes struct with the three values
       PartialCorRes result(lib_size, rho[0], rho[1]);
@@ -287,9 +303,9 @@ std::vector<PartialCorRes> PCMSingle(
       // Run partial cross map and store results
       std::vector<double> rho;
       if (simplex) {
-        rho = PartialSimplex4TS(x_vectors, y, controls, local_lib_indices, pred_indices, conEs, taus, b, cumulate);
+        rho = PartialSimplex4TS(x_vectors, y, controls, local_lib_indices, pred_indices, conEs, taus, b, cumulate, dist_metric, dist_average);
       } else {
-        rho = PartialSMap4TS(x_vectors, y, controls, local_lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
+        rho = PartialSMap4TS(x_vectors, y, controls, local_lib_indices, pred_indices, conEs, taus, b, theta, cumulate, dist_metric, dist_average);
       }
       x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     }
@@ -316,6 +332,8 @@ std::vector<PartialCorRes> PCMSingle(
  * - threads: Number of threads to use for parallel computation.
  * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
+ * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
+ * - dist_average: Whether to average distance by the number of valid vector components.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
  * Returns:
@@ -345,6 +363,8 @@ std::vector<std::vector<double>> PCM(
     int threads,                                        // Number of threads used from the global pool
     int parallel_level,                                 // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate,                                      // Whether to cumulate the partial correlations
+    int dist_metric,                                    // Distance metric selector (1: Manhattan, 2: Euclidean)
+    bool dist_average,                                  // Whether to average distance by the number of valid vector components
     bool progressbar                                    // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -415,7 +435,9 @@ std::vector<std::vector<double>> PCM(
           theta,
           threads_sizet,
           parallel_level,
-          cumulate
+          cumulate,
+          dist_metric,
+          dist_average
         );
         bar++;
       }
@@ -435,7 +457,9 @@ std::vector<std::vector<double>> PCM(
           theta,
           threads_sizet,
           parallel_level,
-          cumulate
+          cumulate,
+          dist_metric,
+          dist_average
         );
       }
     }
@@ -459,7 +483,9 @@ std::vector<std::vector<double>> PCM(
           theta,
           threads_sizet,
           parallel_level,
-          cumulate
+          cumulate,
+          dist_metric,
+          dist_average
         );
         bar++;
       }, threads_sizet);
@@ -480,7 +506,9 @@ std::vector<std::vector<double>> PCM(
           theta,
           threads_sizet,
           parallel_level,
-          cumulate
+          cumulate,
+          dist_metric,
+          dist_average
         );
       }, threads_sizet);
     }

@@ -36,20 +36,21 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppEmbed
-Rcpp::NumericMatrix RcppEmbed(const Rcpp::NumericVector& vec, int E, int tau);
-RcppExport SEXP _tEDM_RcppEmbed(SEXP vecSEXP, SEXP ESEXP, SEXP tauSEXP) {
+Rcpp::NumericMatrix RcppEmbed(const Rcpp::NumericVector& vec, int E, int tau, int style);
+RcppExport SEXP _tEDM_RcppEmbed(SEXP vecSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppEmbed(vec, E, tau));
+    Rcpp::traits::input_parameter< int >::type style(styleSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppEmbed(vec, E, tau, style));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSimplexForecast
-Rcpp::NumericVector RcppSimplexForecast(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, int E, int tau, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors);
-RcppExport SEXP _tEDM_RcppSimplexForecast(SEXP sourceSEXP, SEXP targetSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP) {
+Rcpp::NumericVector RcppSimplexForecast(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, int E, int tau, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& dist_metric, const bool& dist_average);
+RcppExport SEXP _tEDM_RcppSimplexForecast(SEXP sourceSEXP, SEXP targetSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
@@ -59,13 +60,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSimplexForecast(source, target, E, tau, lib, pred, num_neighbors));
+    Rcpp::traits::input_parameter< const int& >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type dist_average(dist_averageSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSimplexForecast(source, target, E, tau, lib, pred, num_neighbors, dist_metric, dist_average));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSMapForecast
-Rcpp::NumericVector RcppSMapForecast(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, int E, int tau, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const double& theta);
-RcppExport SEXP _tEDM_RcppSMapForecast(SEXP sourceSEXP, SEXP targetSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP thetaSEXP) {
+Rcpp::NumericVector RcppSMapForecast(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, int E, int tau, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const double& theta, const int& dist_metric, const bool& dist_average);
+RcppExport SEXP _tEDM_RcppSMapForecast(SEXP sourceSEXP, SEXP targetSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP thetaSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
@@ -76,13 +79,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
     Rcpp::traits::input_parameter< const double& >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSMapForecast(source, target, E, tau, lib, pred, num_neighbors, theta));
+    Rcpp::traits::input_parameter< const int& >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type dist_average(dist_averageSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSMapForecast(source, target, E, tau, lib, pred, num_neighbors, theta, dist_metric, dist_average));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppIntersectionCardinality
-Rcpp::NumericVector RcppIntersectionCardinality(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, int E, int tau, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& n_excluded, const int& threads, const int& parallel_level);
-RcppExport SEXP _tEDM_RcppIntersectionCardinality(SEXP sourceSEXP, SEXP targetSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP n_excludedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+Rcpp::NumericVector RcppIntersectionCardinality(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, int E, int tau, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& n_excluded, const int& dist_metric, const int& threads, const int& parallel_level);
+RcppExport SEXP _tEDM_RcppIntersectionCardinality(SEXP sourceSEXP, SEXP targetSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP n_excludedSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
@@ -93,15 +98,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
     Rcpp::traits::input_parameter< const int& >::type n_excluded(n_excludedSEXP);
+    Rcpp::traits::input_parameter< const int& >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< const int& >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< const int& >::type parallel_level(parallel_levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppIntersectionCardinality(source, target, E, tau, lib, pred, num_neighbors, n_excluded, threads, parallel_level));
+    rcpp_result_gen = Rcpp::wrap(RcppIntersectionCardinality(source, target, E, tau, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMVE4TS
-Rcpp::NumericVector RcppMVE4TS(const Rcpp::NumericMatrix& x, const Rcpp::NumericVector& y, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, int top, int nvar, int threads);
-RcppExport SEXP _tEDM_RcppMVE4TS(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP threadsSEXP) {
+Rcpp::NumericVector RcppMVE4TS(const Rcpp::NumericMatrix& x, const Rcpp::NumericVector& y, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, int top, int nvar, int dist_metric, int dist_average, int threads);
+RcppExport SEXP _tEDM_RcppMVE4TS(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
@@ -113,14 +119,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type top(topSEXP);
     Rcpp::traits::input_parameter< int >::type nvar(nvarSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMVE4TS(x, y, lib, pred, E, tau, b, top, nvar, threads));
+    rcpp_result_gen = Rcpp::wrap(RcppMVE4TS(x, y, lib, pred, E, tau, b, top, nvar, dist_metric, dist_average, threads));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppFNN4TS
-Rcpp::NumericVector RcppFNN4TS(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, int tau, int threads, int parallel_level);
-RcppExport SEXP _tEDM_RcppFNN4TS(SEXP vecSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+Rcpp::NumericVector RcppFNN4TS(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, int tau, int dist_metric, int threads, int parallel_level);
+RcppExport SEXP _tEDM_RcppFNN4TS(SEXP vecSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
@@ -130,15 +138,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppFNN4TS(vec, rt, eps, lib, pred, E, tau, threads, parallel_level));
+    rcpp_result_gen = Rcpp::wrap(RcppFNN4TS(vec, rt, eps, lib, pred, E, tau, dist_metric, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSimplex4TS
-Rcpp::NumericMatrix RcppSimplex4TS(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int threads);
-RcppExport SEXP _tEDM_RcppSimplex4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP threadsSEXP) {
+Rcpp::NumericMatrix RcppSimplex4TS(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int dist_metric, bool dist_average, int threads);
+RcppExport SEXP _tEDM_RcppSimplex4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
@@ -148,14 +157,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSimplex4TS(source, target, lib, pred, E, b, tau, threads));
+    rcpp_result_gen = Rcpp::wrap(RcppSimplex4TS(source, target, lib, pred, E, b, tau, dist_metric, dist_average, threads));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSMap4TS
-Rcpp::NumericMatrix RcppSMap4TS(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::NumericVector& theta, int E, int tau, int b, int threads);
-RcppExport SEXP _tEDM_RcppSMap4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP thetaSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP threadsSEXP) {
+Rcpp::NumericMatrix RcppSMap4TS(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::NumericVector& theta, int E, int tau, int b, int dist_metric, bool dist_average, int threads);
+RcppExport SEXP _tEDM_RcppSMap4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP thetaSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
@@ -166,14 +177,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSMap4TS(source, target, lib, pred, theta, E, tau, b, threads));
+    rcpp_result_gen = Rcpp::wrap(RcppSMap4TS(source, target, lib, pred, theta, E, tau, b, dist_metric, dist_average, threads));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMultiSimplex4TS
-Rcpp::NumericMatrix RcppMultiSimplex4TS(const Rcpp::NumericMatrix& source, const Rcpp::NumericMatrix& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int threads);
-RcppExport SEXP _tEDM_RcppMultiSimplex4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP threadsSEXP) {
+Rcpp::NumericMatrix RcppMultiSimplex4TS(const Rcpp::NumericMatrix& source, const Rcpp::NumericMatrix& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int dist_metric, bool dist_average, int threads);
+RcppExport SEXP _tEDM_RcppMultiSimplex4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type source(sourceSEXP);
@@ -183,14 +196,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMultiSimplex4TS(source, target, lib, pred, E, b, tau, threads));
+    rcpp_result_gen = Rcpp::wrap(RcppMultiSimplex4TS(source, target, lib, pred, E, b, tau, dist_metric, dist_average, threads));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppIC4TS
-Rcpp::NumericMatrix RcppIC4TS(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int exclude, int threads, int parallel_level);
-RcppExport SEXP _tEDM_RcppIC4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP excludeSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+Rcpp::NumericMatrix RcppIC4TS(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int exclude, int dist_metric, int threads, int parallel_level);
+RcppExport SEXP _tEDM_RcppIC4TS(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP excludeSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
@@ -201,15 +216,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type exclude(excludeSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppIC4TS(source, target, lib, pred, E, b, tau, exclude, threads, parallel_level));
+    rcpp_result_gen = Rcpp::wrap(RcppIC4TS(source, target, lib, pred, E, b, tau, exclude, dist_metric, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppCCM
-Rcpp::NumericMatrix RcppCCM(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, bool simplex, double theta, int threads, int parallel_level, bool progressbar);
-RcppExport SEXP _tEDM_RcppCCM(SEXP xSEXP, SEXP ySEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericMatrix RcppCCM(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, bool simplex, double theta, int threads, int parallel_level, int dist_metric, bool dist_average, bool progressbar);
+RcppExport SEXP _tEDM_RcppCCM(SEXP xSEXP, SEXP ySEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
@@ -224,14 +240,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppCCM(x, y, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppCCM(x, y, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, dist_metric, dist_average, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppPCM
-Rcpp::NumericMatrix RcppPCM(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericMatrix& z, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerVector& b, bool simplex, double theta, int threads, int parallel_level, bool cumulate, bool progressbar);
-RcppExport SEXP _tEDM_RcppPCM(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP cumulateSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericMatrix RcppPCM(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericMatrix& z, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerVector& b, bool simplex, double theta, int threads, int parallel_level, bool cumulate, int dist_metric, bool dist_average, bool progressbar);
+RcppExport SEXP _tEDM_RcppPCM(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP cumulateSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
@@ -248,14 +266,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
     Rcpp::traits::input_parameter< bool >::type cumulate(cumulateSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppPCM(x, y, z, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, cumulate, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppPCM(x, y, z, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, cumulate, dist_metric, dist_average, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppCMC
-Rcpp::List RcppCMC(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int b, int r, int threads, int parallel_level, bool progressbar);
-RcppExport SEXP _tEDM_RcppCMC(SEXP xSEXP, SEXP ySEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP rSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
+Rcpp::List RcppCMC(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int b, int r, int dist_metric, int threads, int parallel_level, bool progressbar);
+RcppExport SEXP _tEDM_RcppCMC(SEXP xSEXP, SEXP ySEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP rSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
@@ -267,16 +287,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppCMC(x, y, libsizes, lib, pred, E, tau, b, r, threads, parallel_level, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppCMC(x, y, libsizes, lib, pred, E, tau, b, r, dist_metric, threads, parallel_level, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMultispatialCCM
-Rcpp::NumericMatrix RcppMultispatialCCM(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerVector& libsizes, int E, int tau, int b, int boot, int seed, int threads, int parallel_level, bool progressbar);
-RcppExport SEXP _tEDM_RcppMultispatialCCM(SEXP xSEXP, SEXP ySEXP, SEXP libsizesSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP seedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericMatrix RcppMultispatialCCM(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerVector& libsizes, int E, int tau, int b, int boot, int seed, int threads, int parallel_level, int dist_metric, bool dist_average, bool progressbar);
+RcppExport SEXP _tEDM_RcppMultispatialCCM(SEXP xSEXP, SEXP ySEXP, SEXP libsizesSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP seedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
@@ -289,8 +310,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMultispatialCCM(x, y, libsizes, E, tau, b, boot, seed, threads, parallel_level, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppMultispatialCCM(x, y, libsizes, E, tau, b, boot, seed, threads, parallel_level, dist_metric, dist_average, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -569,8 +592,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppPartialCor
-double RcppPartialCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericMatrix& controls, bool NA_rm, bool linear);
-RcppExport SEXP _tEDM_RcppPartialCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlsSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
+double RcppPartialCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericMatrix& controls, bool NA_rm, bool linear, double pinv_tol);
+RcppExport SEXP _tEDM_RcppPartialCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlsSEXP, SEXP NA_rmSEXP, SEXP linearSEXP, SEXP pinv_tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
@@ -578,13 +601,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type controls(controlsSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     Rcpp::traits::input_parameter< bool >::type linear(linearSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppPartialCor(y, y_hat, controls, NA_rm, linear));
+    Rcpp::traits::input_parameter< double >::type pinv_tol(pinv_tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppPartialCor(y, y_hat, controls, NA_rm, linear, pinv_tol));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppPartialCorTrivar
-double RcppPartialCorTrivar(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericVector& control, bool NA_rm, bool linear);
-RcppExport SEXP _tEDM_RcppPartialCorTrivar(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
+double RcppPartialCorTrivar(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericVector& control, bool NA_rm, bool linear, double pinv_tol);
+RcppExport SEXP _tEDM_RcppPartialCorTrivar(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlSEXP, SEXP NA_rmSEXP, SEXP linearSEXP, SEXP pinv_tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
@@ -592,7 +616,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type control(controlSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     Rcpp::traits::input_parameter< bool >::type linear(linearSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppPartialCorTrivar(y, y_hat, control, NA_rm, linear));
+    Rcpp::traits::input_parameter< double >::type pinv_tol(pinv_tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppPartialCorTrivar(y, y_hat, control, NA_rm, linear, pinv_tol));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -764,15 +789,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppMatKNNeighbors
-Rcpp::List RcppMatKNNeighbors(const Rcpp::NumericMatrix& embeddings, const Rcpp::IntegerVector& lib, int k, int threads);
-RcppExport SEXP _tEDM_RcppMatKNNeighbors(SEXP embeddingsSEXP, SEXP libSEXP, SEXP kSEXP, SEXP threadsSEXP) {
+Rcpp::List RcppMatKNNeighbors(const Rcpp::NumericMatrix& embeddings, const Rcpp::IntegerVector& lib, int k, int threads, bool L1norm);
+RcppExport SEXP _tEDM_RcppMatKNNeighbors(SEXP embeddingsSEXP, SEXP libSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP L1normSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embeddings(embeddingsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMatKNNeighbors(embeddings, lib, k, threads));
+    Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMatKNNeighbors(embeddings, lib, k, threads, L1norm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -814,20 +840,20 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_tEDM_RcppLogisticMap", (DL_FUNC) &_tEDM_RcppLogisticMap, 14},
-    {"_tEDM_RcppEmbed", (DL_FUNC) &_tEDM_RcppEmbed, 3},
-    {"_tEDM_RcppSimplexForecast", (DL_FUNC) &_tEDM_RcppSimplexForecast, 7},
-    {"_tEDM_RcppSMapForecast", (DL_FUNC) &_tEDM_RcppSMapForecast, 8},
-    {"_tEDM_RcppIntersectionCardinality", (DL_FUNC) &_tEDM_RcppIntersectionCardinality, 10},
-    {"_tEDM_RcppMVE4TS", (DL_FUNC) &_tEDM_RcppMVE4TS, 10},
-    {"_tEDM_RcppFNN4TS", (DL_FUNC) &_tEDM_RcppFNN4TS, 9},
-    {"_tEDM_RcppSimplex4TS", (DL_FUNC) &_tEDM_RcppSimplex4TS, 8},
-    {"_tEDM_RcppSMap4TS", (DL_FUNC) &_tEDM_RcppSMap4TS, 9},
-    {"_tEDM_RcppMultiSimplex4TS", (DL_FUNC) &_tEDM_RcppMultiSimplex4TS, 8},
-    {"_tEDM_RcppIC4TS", (DL_FUNC) &_tEDM_RcppIC4TS, 10},
-    {"_tEDM_RcppCCM", (DL_FUNC) &_tEDM_RcppCCM, 13},
-    {"_tEDM_RcppPCM", (DL_FUNC) &_tEDM_RcppPCM, 15},
-    {"_tEDM_RcppCMC", (DL_FUNC) &_tEDM_RcppCMC, 12},
-    {"_tEDM_RcppMultispatialCCM", (DL_FUNC) &_tEDM_RcppMultispatialCCM, 11},
+    {"_tEDM_RcppEmbed", (DL_FUNC) &_tEDM_RcppEmbed, 4},
+    {"_tEDM_RcppSimplexForecast", (DL_FUNC) &_tEDM_RcppSimplexForecast, 9},
+    {"_tEDM_RcppSMapForecast", (DL_FUNC) &_tEDM_RcppSMapForecast, 10},
+    {"_tEDM_RcppIntersectionCardinality", (DL_FUNC) &_tEDM_RcppIntersectionCardinality, 11},
+    {"_tEDM_RcppMVE4TS", (DL_FUNC) &_tEDM_RcppMVE4TS, 12},
+    {"_tEDM_RcppFNN4TS", (DL_FUNC) &_tEDM_RcppFNN4TS, 10},
+    {"_tEDM_RcppSimplex4TS", (DL_FUNC) &_tEDM_RcppSimplex4TS, 10},
+    {"_tEDM_RcppSMap4TS", (DL_FUNC) &_tEDM_RcppSMap4TS, 11},
+    {"_tEDM_RcppMultiSimplex4TS", (DL_FUNC) &_tEDM_RcppMultiSimplex4TS, 10},
+    {"_tEDM_RcppIC4TS", (DL_FUNC) &_tEDM_RcppIC4TS, 11},
+    {"_tEDM_RcppCCM", (DL_FUNC) &_tEDM_RcppCCM, 15},
+    {"_tEDM_RcppPCM", (DL_FUNC) &_tEDM_RcppPCM, 17},
+    {"_tEDM_RcppCMC", (DL_FUNC) &_tEDM_RcppCMC, 13},
+    {"_tEDM_RcppMultispatialCCM", (DL_FUNC) &_tEDM_RcppMultispatialCCM, 13},
     {"_tEDM_DetectMaxNumThreads", (DL_FUNC) &_tEDM_DetectMaxNumThreads, 0},
     {"_tEDM_OptEmbedDim", (DL_FUNC) &_tEDM_OptEmbedDim, 1},
     {"_tEDM_OptThetaParm", (DL_FUNC) &_tEDM_OptThetaParm, 1},
@@ -853,8 +879,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_tEDM_RcppPearsonCor", (DL_FUNC) &_tEDM_RcppPearsonCor, 3},
     {"_tEDM_RcppSpearmanCor", (DL_FUNC) &_tEDM_RcppSpearmanCor, 3},
     {"_tEDM_RcppKendallCor", (DL_FUNC) &_tEDM_RcppKendallCor, 3},
-    {"_tEDM_RcppPartialCor", (DL_FUNC) &_tEDM_RcppPartialCor, 5},
-    {"_tEDM_RcppPartialCorTrivar", (DL_FUNC) &_tEDM_RcppPartialCorTrivar, 5},
+    {"_tEDM_RcppPartialCor", (DL_FUNC) &_tEDM_RcppPartialCor, 6},
+    {"_tEDM_RcppPartialCorTrivar", (DL_FUNC) &_tEDM_RcppPartialCorTrivar, 6},
     {"_tEDM_RcppCorSignificance", (DL_FUNC) &_tEDM_RcppCorSignificance, 3},
     {"_tEDM_RcppCorConfidence", (DL_FUNC) &_tEDM_RcppCorConfidence, 4},
     {"_tEDM_RcppMeanCorSignificance", (DL_FUNC) &_tEDM_RcppMeanCorSignificance, 3},
@@ -868,7 +894,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_tEDM_RcppKNNIndice", (DL_FUNC) &_tEDM_RcppKNNIndice, 4},
     {"_tEDM_RcppDistKNNIndice", (DL_FUNC) &_tEDM_RcppDistKNNIndice, 4},
     {"_tEDM_RcppDistSortedIndice", (DL_FUNC) &_tEDM_RcppDistSortedIndice, 4},
-    {"_tEDM_RcppMatKNNeighbors", (DL_FUNC) &_tEDM_RcppMatKNNeighbors, 4},
+    {"_tEDM_RcppMatKNNeighbors", (DL_FUNC) &_tEDM_RcppMatKNNeighbors, 5},
     {"_tEDM_RcppLinearTrendRM", (DL_FUNC) &_tEDM_RcppLinearTrendRM, 4},
     {"_tEDM_RcppSVD", (DL_FUNC) &_tEDM_RcppSVD, 1},
     {"_tEDM_RcppDeLongPlacements", (DL_FUNC) &_tEDM_RcppDeLongPlacements, 3},

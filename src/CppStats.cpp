@@ -612,12 +612,14 @@ double KendallCor(const std::vector<double>& y,
  * Optionally, missing values (NA) can be removed if 'NA_rm' is set to true.
  *
  * Parameters:
- *   y          - A vector representing the dependent variable.
- *   y_hat      - A vector representing the predicted variable.
- *   controls   - A matrix where each row corresponds to a control variable to adjust for in the correlation.
- *   NA_rm      - A boolean flag to indicate whether to remove missing values (default is false).
- *   linear     - A boolean flag to specify whether to use linear regression (true) or correlation matrix (false)
- *                for computing the partial correlation (default is false).
+ *   y            - A vector representing the dependent variable.
+ *   y_hat        - A vector representing the predicted variable.
+ *   controls     - A matrix where each row corresponds to a control variable to adjust for in the correlation.
+ *   NA_rm        - A boolean flag to indicate whether to remove missing values (default is false).
+ *   linear       - A boolean flag to specify whether to use linear regression (true) or correlation matrix (false)
+ *                  for computing the partial correlation (default is false).
+ *   pinv_tol     - Tolerance used for the pseudo-inverse (arma::pinv). Smaller values increase precision but may be less stable
+ *                  (default is 1e-10).
  *
  * Returns:
  *   A double representing the partial correlation coefficient between 'y' and 'y_hat' after controlling for
@@ -627,7 +629,8 @@ double PartialCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   const std::vector<std::vector<double>>& controls,
                   bool NA_rm = false,
-                  bool linear = false) {
+                  bool linear = false,
+                  double pinv_tol = 1e-10) {
   // Check input sizes
   if (y.size() != y_hat.size()) {
     throw std::invalid_argument("Input vectors y and y_hat must have the same size.");
@@ -713,6 +716,11 @@ double PartialCor(const std::vector<double>& y,
     // Compute the correlation matrix of the data
     arma::mat corrm = arma::cor(data);
 
+    // Check matrix validity
+    if (!corrm.is_finite()) {
+      return std::numeric_limits<double>::quiet_NaN();
+    }
+
     // // Compute the precision matrix (inverse of the correlation matrix)
     // arma::mat precm = arma::inv(corrm);
 
@@ -720,7 +728,7 @@ double PartialCor(const std::vector<double>& y,
     // arma::mat precm = arma::pinv(corrm);
     arma::mat precm;
     try {
-      precm = arma::pinv(corrm, 1e-10);
+      precm = arma::pinv(corrm, pinv_tol);
     } catch (...) {
       return std::numeric_limits<double>::quiet_NaN();
     }
@@ -740,11 +748,12 @@ double PartialCorTrivar(const std::vector<double>& y,
                         const std::vector<double>& y_hat,
                         const std::vector<double>& control,
                         bool NA_rm = false,
-                        bool linear = false){
+                        bool linear = false,
+                        double pinv_tol = 1e-10){
   std::vector<std::vector<double>> conmat;
   conmat.push_back(control);
 
-  double res = PartialCor(y,y_hat,conmat,NA_rm,linear);
+  double res = PartialCor(y,y_hat,conmat,NA_rm,linear,pinv_tol);
   return res;
 }
 

@@ -17,7 +17,9 @@
   algorithm = "simplex",
   lib = NULL,
   pred = NULL,
-  threads = length(libsizes),
+  dist.metric = "L1",
+  dist.average = TRUE,
+  threads = length(pred),
   parallel.level = "low",
   bidirectional = TRUE,
   progressbar = TRUE
@@ -46,6 +48,10 @@
 
 \item{pred}{(optional) predictions indices.}
 
+\item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
+
+\item{dist.average}{(optional) whether to average distance.}
+
 \item{threads}{(optional) number of threads to use.}
 
 \item{parallel.level}{(optional) level of parallelism, \code{low} or \code{high}.}
@@ -67,7 +73,7 @@ convergent cross mapping
 }
 \examples{
 sim = logistic_map(x = 0.4,y = 0.4,step = 45,beta_xy = 0.5,beta_yx = 0)
-ccm(sim,"x","y",libsizes = seq(5,35,5),E = 8,k = 7,threads = 1)
+ccm(sim,"x","y",libsizes = seq(5,45,5),E = 10,k = 7,threads = 1)
 
 }
 \references{

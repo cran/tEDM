@@ -1,20 +1,20 @@
-.simplex_ts_method = \(data, column, target, lib = NULL, pred = NULL,
-                       E = 2:10, tau = 0, k = E+1, threads = length(E)){
+.simplex_ts_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, 
+                       k = E+1,dist.metric = "L1",dist.average = TRUE,threads = length(E)){
   vx = .uni_ts(data,column)
   vy = .uni_ts(data,target)
   if (is.null(lib)) lib = .internal_library(cbind(vx,vy))
   if (is.null(pred)) pred = lib
-  res = RcppSimplex4TS(vx,vy,lib,pred,E,k,tau,threads)
+  res = RcppSimplex4TS(vx,vy,lib,pred,E,k,tau,.check_distmetric(dist.metric),dist.average,threads)
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
-.simplex_tss_method = \(data, column, target, lib = NULL, pred = NULL,
-                        E = 2:10, tau = 0, k = E+1, threads = length(E)){
+.simplex_tss_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, 
+                        k = E+1,dist.metric = "L1",dist.average = TRUE,threads = length(E)){
   mx = as.matrix(data[[column]])
   my = as.matrix(data[[target]])
   if (is.null(lib)) lib = seq_len(ncol(my))
   if (is.null(pred)) pred = lib
-  res = RcppMultiSimplex4TS(mx,my,lib,pred,E,k,tau,threads)
+  res = RcppMultiSimplex4TS(mx,my,lib,pred,E,k,tau,.check_distmetric(dist.metric),dist.average,threads)
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
@@ -25,6 +25,8 @@
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
 #' @param k (optional) number of nearest neighbors used in prediction.
+#' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
+#' @param dist.average (optional) whether to average distance.
 #' @param threads (optional) number of threads to use.
 #'
 #' @return A list
@@ -42,7 +44,7 @@
 #'
 #' @examples
 #' sim = logistic_map(x = 0.4,y = 0.4,step = 45,beta_xy = 0.5,beta_yx = 0)
-#' simplex(sim,"x","y",k = 7,threads = 1)
+#' simplex(sim,"x","y",E = 4:10,k = 7,threads = 1)
 #'
 methods::setMethod("simplex", "data.frame", .simplex_ts_method)
 

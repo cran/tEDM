@@ -196,7 +196,8 @@ double RcppPartialCor(const Rcpp::NumericVector& y,
                       const Rcpp::NumericVector& y_hat,
                       const Rcpp::NumericMatrix& controls,
                       bool NA_rm = false,
-                      bool linear = false) {
+                      bool linear = false,
+                      double pinv_tol = 1e-10) {
 
   // Convert Rcpp NumericVector to std::vector
   std::vector<double> std_y = Rcpp::as<std::vector<double>>(y);
@@ -210,7 +211,7 @@ double RcppPartialCor(const Rcpp::NumericVector& y,
   }
 
   // Call the PartialCor function
-  return PartialCor(std_y, std_y_hat, std_controls, NA_rm, linear);
+  return PartialCor(std_y, std_y_hat, std_controls, NA_rm, linear, pinv_tol);
 }
 
 // [[Rcpp::export(rng = false)]]
@@ -218,7 +219,8 @@ double RcppPartialCorTrivar(const Rcpp::NumericVector& y,
                             const Rcpp::NumericVector& y_hat,
                             const Rcpp::NumericVector& control,
                             bool NA_rm = false,
-                            bool linear = false) {
+                            bool linear = false,
+                            double pinv_tol = 1e-10) {
 
   // Convert Rcpp NumericVector to std::vector
   std::vector<double> std_y = Rcpp::as<std::vector<double>>(y);
@@ -226,7 +228,7 @@ double RcppPartialCorTrivar(const Rcpp::NumericVector& y,
   std::vector<double> std_control = Rcpp::as<std::vector<double>>(control);
 
   // Call the PartialCorTrivar function
-  return PartialCorTrivar(std_y, std_y_hat, std_control, NA_rm, linear);
+  return PartialCorTrivar(std_y, std_y_hat, std_control, NA_rm, linear, pinv_tol);
 }
 
 // Wrapper function to calculate the significance of a (partial) correlation coefficient
@@ -538,7 +540,7 @@ Rcpp::List RcppDistSortedIndice(const Rcpp::NumericMatrix& dist_mat,
 // [[Rcpp::export(rng = false)]]
 Rcpp::List RcppMatKNNeighbors(const Rcpp::NumericMatrix& embeddings,
                               const Rcpp::IntegerVector& lib,
-                              int k, int threads = 8) {
+                              int k, int threads = 8, bool L1norm = false) {
   // Get number of rows and columns
   const int n = embeddings.nrow();
   const int m = embeddings.ncol();
@@ -557,7 +559,10 @@ Rcpp::List RcppMatKNNeighbors(const Rcpp::NumericMatrix& embeddings,
   }
 
   // Call the existing C++ function to compute sorted neighbor indices
-  std::vector<std::vector<size_t>> result = CppMatKNNeighbors(emb, lib_std, static_cast<size_t>(k), static_cast<size_t>(threads));
+  std::vector<std::vector<size_t>> result = CppMatKNNeighbors(emb, lib_std, 
+                                                              static_cast<size_t>(k), 
+                                                              static_cast<size_t>(threads),
+                                                              L1norm);
 
   // Convert the result to an R list of integer vectors
   Rcpp::List out(n);

@@ -1,6 +1,6 @@
 Package: tEDM
 Title: Temporal Empirical Dynamic Modeling
-Version: 1.0
+Version: 1.1
 Authors@R: 
     person(given = "Wenbo", family = "Lv",
            email = "lyu.geosocial@gmail.com", 
@@ -19,9 +19,9 @@ Suggests: RcppThread, RcppArmadillo, readr, plot3D, spEDM, knitr,
         rmarkdown, purrr, tidyr, cowplot
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2025-07-11 07:30:54 UTC; 31809
+Packaged: 2025-08-25 09:27:25 UTC; 31809
 Author: Wenbo Lv [aut, cre, cph] (ORCID:
     <https://orcid.org/0009-0002-6003-3800>)
 Maintainer: Wenbo Lv <lyu.geosocial@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-07-15 12:00:02 UTC
+Date/Publication: 2025-08-25 09:50:10 UTC

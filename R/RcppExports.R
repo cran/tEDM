@@ -5,60 +5,60 @@ RcppLogisticMap <- function(x = 3.6, y = 3.72, z = 3.68, step = 20L, alpha_x = 0
     .Call(`_tEDM_RcppLogisticMap`, x, y, z, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, escape_threshold)
 }
 
-RcppEmbed <- function(vec, E, tau = 0L) {
-    .Call(`_tEDM_RcppEmbed`, vec, E, tau)
+RcppEmbed <- function(vec, E = 3L, tau = 1L, style = 0L) {
+    .Call(`_tEDM_RcppEmbed`, vec, E, tau, style)
 }
 
-RcppSimplexForecast <- function(source, target, E, tau, lib, pred, num_neighbors) {
-    .Call(`_tEDM_RcppSimplexForecast`, source, target, E, tau, lib, pred, num_neighbors)
+RcppSimplexForecast <- function(source, target, E, tau, lib, pred, num_neighbors, dist_metric, dist_average) {
+    .Call(`_tEDM_RcppSimplexForecast`, source, target, E, tau, lib, pred, num_neighbors, dist_metric, dist_average)
 }
 
-RcppSMapForecast <- function(source, target, E, tau, lib, pred, num_neighbors, theta) {
-    .Call(`_tEDM_RcppSMapForecast`, source, target, E, tau, lib, pred, num_neighbors, theta)
+RcppSMapForecast <- function(source, target, E, tau, lib, pred, num_neighbors, theta, dist_metric, dist_average) {
+    .Call(`_tEDM_RcppSMapForecast`, source, target, E, tau, lib, pred, num_neighbors, theta, dist_metric, dist_average)
 }
 
-RcppIntersectionCardinality <- function(source, target, E, tau, lib, pred, num_neighbors = 4L, n_excluded = 0L, threads = 8L, parallel_level = 0L) {
-    .Call(`_tEDM_RcppIntersectionCardinality`, source, target, E, tau, lib, pred, num_neighbors, n_excluded, threads, parallel_level)
+RcppIntersectionCardinality <- function(source, target, E, tau, lib, pred, num_neighbors = 4L, n_excluded = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+    .Call(`_tEDM_RcppIntersectionCardinality`, source, target, E, tau, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level)
 }
 
-RcppMVE4TS <- function(x, y, lib, pred, E, tau, b, top, nvar, threads) {
-    .Call(`_tEDM_RcppMVE4TS`, x, y, lib, pred, E, tau, b, top, nvar, threads)
+RcppMVE4TS <- function(x, y, lib, pred, E = 3L, tau = 1L, b = 4L, top = 3L, nvar = 3L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_tEDM_RcppMVE4TS`, x, y, lib, pred, E, tau, b, top, nvar, dist_metric, dist_average, threads)
 }
 
-RcppFNN4TS <- function(vec, rt, eps, lib, pred, E, tau = 0L, threads = 8L, parallel_level = 0L) {
-    .Call(`_tEDM_RcppFNN4TS`, vec, rt, eps, lib, pred, E, tau, threads, parallel_level)
+RcppFNN4TS <- function(vec, rt, eps, lib, pred, E, tau = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+    .Call(`_tEDM_RcppFNN4TS`, vec, rt, eps, lib, pred, E, tau, dist_metric, threads, parallel_level)
 }
 
-RcppSimplex4TS <- function(source, target, lib, pred, E, b, tau = 0L, threads = 8L) {
-    .Call(`_tEDM_RcppSimplex4TS`, source, target, lib, pred, E, b, tau, threads)
+RcppSimplex4TS <- function(source, target, lib, pred, E, b, tau = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_tEDM_RcppSimplex4TS`, source, target, lib, pred, E, b, tau, dist_metric, dist_average, threads)
 }
 
-RcppSMap4TS <- function(source, target, lib, pred, theta, E = 3L, tau = 0L, b = 4L, threads = 8L) {
-    .Call(`_tEDM_RcppSMap4TS`, source, target, lib, pred, theta, E, tau, b, threads)
+RcppSMap4TS <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 4L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_tEDM_RcppSMap4TS`, source, target, lib, pred, theta, E, tau, b, dist_metric, dist_average, threads)
 }
 
-RcppMultiSimplex4TS <- function(source, target, lib, pred, E, b, tau = 0L, threads = 8L) {
-    .Call(`_tEDM_RcppMultiSimplex4TS`, source, target, lib, pred, E, b, tau, threads)
+RcppMultiSimplex4TS <- function(source, target, lib, pred, E, b, tau = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_tEDM_RcppMultiSimplex4TS`, source, target, lib, pred, E, b, tau, dist_metric, dist_average, threads)
 }
 
-RcppIC4TS <- function(source, target, lib, pred, E, b, tau = 0L, exclude = 0L, threads = 8L, parallel_level = 0L) {
-    .Call(`_tEDM_RcppIC4TS`, source, target, lib, pred, E, b, tau, exclude, threads, parallel_level)
+RcppIC4TS <- function(source, target, lib, pred, E, b, tau = 1L, exclude = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+    .Call(`_tEDM_RcppIC4TS`, source, target, lib, pred, E, b, tau, exclude, dist_metric, threads, parallel_level)
 }
 
-RcppCCM <- function(x, y, libsizes, lib, pred, E = 3L, tau = 0L, b = 4L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, progressbar = FALSE) {
-    .Call(`_tEDM_RcppCCM`, x, y, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, progressbar)
+RcppCCM <- function(x, y, libsizes, lib, pred, E = 3L, tau = 0L, b = 4L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, dist_metric = 2L, dist_average = TRUE, progressbar = FALSE) {
+    .Call(`_tEDM_RcppCCM`, x, y, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, dist_metric, dist_average, progressbar)
 }
 
-RcppPCM <- function(x, y, z, libsizes, lib, pred, E, tau, b, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, cumulate = FALSE, progressbar = FALSE) {
-    .Call(`_tEDM_RcppPCM`, x, y, z, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, cumulate, progressbar)
+RcppPCM <- function(x, y, z, libsizes, lib, pred, E, tau, b, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, cumulate = FALSE, dist_metric = 2L, dist_average = TRUE, progressbar = FALSE) {
+    .Call(`_tEDM_RcppPCM`, x, y, z, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, cumulate, dist_metric, dist_average, progressbar)
 }
 
-RcppCMC <- function(x, y, libsizes, lib, pred, E, tau, b, r = 0L, threads = 8L, parallel_level = 0L, progressbar = FALSE) {
-    .Call(`_tEDM_RcppCMC`, x, y, libsizes, lib, pred, E, tau, b, r, threads, parallel_level, progressbar)
+RcppCMC <- function(x, y, libsizes, lib, pred, E, tau, b = 4L, r = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L, progressbar = FALSE) {
+    .Call(`_tEDM_RcppCMC`, x, y, libsizes, lib, pred, E, tau, b, r, dist_metric, threads, parallel_level, progressbar)
 }
 
-RcppMultispatialCCM <- function(x, y, libsizes, E = 3L, tau = 0L, b = 4L, boot = 299L, seed = 42L, threads = 8L, parallel_level = 0L, progressbar = FALSE) {
-    .Call(`_tEDM_RcppMultispatialCCM`, x, y, libsizes, E, tau, b, boot, seed, threads, parallel_level, progressbar)
+RcppMultispatialCCM <- function(x, y, libsizes, E = 3L, tau = 0L, b = 4L, boot = 299L, seed = 42L, threads = 8L, parallel_level = 0L, dist_metric = 2L, dist_average = TRUE, progressbar = FALSE) {
+    .Call(`_tEDM_RcppMultispatialCCM`, x, y, libsizes, E, tau, b, boot, seed, threads, parallel_level, dist_metric, dist_average, progressbar)
 }
 
 DetectMaxNumThreads <- function() {
@@ -161,12 +161,12 @@ RcppKendallCor <- function(y, y_hat, NA_rm = FALSE) {
     .Call(`_tEDM_RcppKendallCor`, y, y_hat, NA_rm)
 }
 
-RcppPartialCor <- function(y, y_hat, controls, NA_rm = FALSE, linear = FALSE) {
-    .Call(`_tEDM_RcppPartialCor`, y, y_hat, controls, NA_rm, linear)
+RcppPartialCor <- function(y, y_hat, controls, NA_rm = FALSE, linear = FALSE, pinv_tol = 1e-10) {
+    .Call(`_tEDM_RcppPartialCor`, y, y_hat, controls, NA_rm, linear, pinv_tol)
 }
 
-RcppPartialCorTrivar <- function(y, y_hat, control, NA_rm = FALSE, linear = FALSE) {
-    .Call(`_tEDM_RcppPartialCorTrivar`, y, y_hat, control, NA_rm, linear)
+RcppPartialCorTrivar <- function(y, y_hat, control, NA_rm = FALSE, linear = FALSE, pinv_tol = 1e-10) {
+    .Call(`_tEDM_RcppPartialCorTrivar`, y, y_hat, control, NA_rm, linear, pinv_tol)
 }
 
 RcppCorSignificance <- function(r, n, k = 0L) {
@@ -221,8 +221,8 @@ RcppDistSortedIndice <- function(dist_mat, lib, k, include_self = FALSE) {
     .Call(`_tEDM_RcppDistSortedIndice`, dist_mat, lib, k, include_self)
 }
 
-RcppMatKNNeighbors <- function(embeddings, lib, k, threads = 8L) {
-    .Call(`_tEDM_RcppMatKNNeighbors`, embeddings, lib, k, threads)
+RcppMatKNNeighbors <- function(embeddings, lib, k, threads = 8L, L1norm = FALSE) {
+    .Call(`_tEDM_RcppMatKNNeighbors`, embeddings, lib, k, threads, L1norm)
 }
 
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {

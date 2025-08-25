@@ -13,8 +13,10 @@
   lib = NULL,
   pred = NULL,
   E = 2:10,
-  tau = 0,
+  tau = 1,
   k = E + 1,
+  dist.metric = "L1",
+  dist.average = TRUE,
   threads = length(E)
 )
 
@@ -25,8 +27,10 @@
   lib = NULL,
   pred = NULL,
   E = 2:10,
-  tau = 0,
+  tau = 1,
   k = E + 1,
+  dist.metric = "L1",
+  dist.average = TRUE,
   threads = length(E)
 )
 }
@@ -47,6 +51,10 @@
 
 \item{k}{(optional) number of nearest neighbors used in prediction.}
 
+\item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
+
+\item{dist.average}{(optional) whether to average distance.}
+
 \item{threads}{(optional) number of threads to use.}
 }
 \value{
@@ -63,7 +71,7 @@ simplex forecast
 }
 \examples{
 sim = logistic_map(x = 0.4,y = 0.4,step = 45,beta_xy = 0.5,beta_yx = 0)
-simplex(sim,"x","y",k = 7,threads = 1)
+simplex(sim,"x","y",E = 4:10,k = 7,threads = 1)
 
 }
 \references{
