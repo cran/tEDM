@@ -1,4 +1,4 @@
-.pcm_ts_method = \(data, cause, effect, conds, libsizes = NULL, E = 3, tau = 0, k = E+1, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL, dist.metric = "L1",
+.pcm_ts_method = \(data, cause, effect, conds, libsizes = NULL, E = 3, tau = 1, k = E+1, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL, dist.metric = "L1",
                    dist.average = TRUE, threads = length(pred), parallel.level = "low", bidirectional = TRUE, cumulate = FALSE, progressbar = TRUE){
   varname = .check_character(c(cause, effect, conds))
   E = .check_inputelementnum(E,length(varname),length(conds))
@@ -34,7 +34,7 @@
 #' \describe{
 #' \item{\code{pxmap}}{partial cross mapping results}
 #' \item{\code{xmap}}{cross mapping results}
-#' \item{\code{varname}}{names of causal and effect variable}
+#' \item{\code{varname}}{names of causal, effect and conditioning variables}
 #' \item{\code{bidirectional}}{whether to examine bidirectional causality}
 #' }
 #' @export

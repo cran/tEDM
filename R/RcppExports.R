@@ -17,8 +17,8 @@ RcppSMapForecast <- function(source, target, E, tau, lib, pred, num_neighbors, t
     .Call(`_tEDM_RcppSMapForecast`, source, target, E, tau, lib, pred, num_neighbors, theta, dist_metric, dist_average)
 }
 
-RcppIntersectionCardinality <- function(source, target, E, tau, lib, pred, num_neighbors = 4L, n_excluded = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
-    .Call(`_tEDM_RcppIntersectionCardinality`, source, target, E, tau, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level)
+RcppIntersectionalCardinality <- function(source, target, E, tau, lib, pred, num_neighbors = 4L, n_excluded = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+    .Call(`_tEDM_RcppIntersectionalCardinality`, source, target, E, tau, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level)
 }
 
 RcppMVE4TS <- function(x, y, lib, pred, E = 3L, tau = 1L, b = 4L, top = 3L, nvar = 3L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
@@ -29,7 +29,7 @@ RcppFNN4TS <- function(vec, rt, eps, lib, pred, E, tau = 1L, dist_metric = 2L, t
     .Call(`_tEDM_RcppFNN4TS`, vec, rt, eps, lib, pred, E, tau, dist_metric, threads, parallel_level)
 }
 
-RcppSimplex4TS <- function(source, target, lib, pred, E, b, tau = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+RcppSimplex4TS <- function(source, target, lib, pred, E, b, tau, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
     .Call(`_tEDM_RcppSimplex4TS`, source, target, lib, pred, E, b, tau, dist_metric, dist_average, threads)
 }
 
@@ -37,11 +37,11 @@ RcppSMap4TS <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 
     .Call(`_tEDM_RcppSMap4TS`, source, target, lib, pred, theta, E, tau, b, dist_metric, dist_average, threads)
 }
 
-RcppMultiSimplex4TS <- function(source, target, lib, pred, E, b, tau = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+RcppMultiSimplex4TS <- function(source, target, lib, pred, E, b, tau, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
     .Call(`_tEDM_RcppMultiSimplex4TS`, source, target, lib, pred, E, b, tau, dist_metric, dist_average, threads)
 }
 
-RcppIC4TS <- function(source, target, lib, pred, E, b, tau = 1L, exclude = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+RcppIC4TS <- function(source, target, lib, pred, E, b, tau, exclude = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
     .Call(`_tEDM_RcppIC4TS`, source, target, lib, pred, E, b, tau, exclude, dist_metric, threads, parallel_level)
 }
 
@@ -57,28 +57,8 @@ RcppCMC <- function(x, y, libsizes, lib, pred, E, tau, b = 4L, r = 0L, dist_metr
     .Call(`_tEDM_RcppCMC`, x, y, libsizes, lib, pred, E, tau, b, r, dist_metric, threads, parallel_level, progressbar)
 }
 
-RcppMultispatialCCM <- function(x, y, libsizes, E = 3L, tau = 0L, b = 4L, boot = 299L, seed = 42L, threads = 8L, parallel_level = 0L, dist_metric = 2L, dist_average = TRUE, progressbar = FALSE) {
-    .Call(`_tEDM_RcppMultispatialCCM`, x, y, libsizes, E, tau, b, boot, seed, threads, parallel_level, dist_metric, dist_average, progressbar)
-}
-
-DetectMaxNumThreads <- function() {
-    .Call(`_tEDM_DetectMaxNumThreads`)
-}
-
-OptEmbedDim <- function(Emat) {
-    .Call(`_tEDM_OptEmbedDim`, Emat)
-}
-
-OptThetaParm <- function(Thetamat) {
-    .Call(`_tEDM_OptThetaParm`, Thetamat)
-}
-
-OptICparm <- function(Emat) {
-    .Call(`_tEDM_OptICparm`, Emat)
-}
-
-MatNotNAIndice <- function(mat, byrow = TRUE) {
-    .Call(`_tEDM_MatNotNAIndice`, mat, byrow)
+RcppMultispatialCCM <- function(x, y, libsizes, lib, E = 3L, tau = 0L, b = 4L, boot = 299L, seed = 42L, threads = 8L, parallel_level = 0L, dist_metric = 2L, dist_average = TRUE, progressbar = FALSE) {
+    .Call(`_tEDM_RcppMultispatialCCM`, x, y, libsizes, lib, E, tau, b, boot, seed, threads, parallel_level, dist_metric, dist_average, progressbar)
 }
 
 RcppFactorial <- function(n) {
@@ -87,6 +67,14 @@ RcppFactorial <- function(n) {
 
 RcppCombine <- function(n, k) {
     .Call(`_tEDM_RcppCombine`, n, k)
+}
+
+RcppCombn <- function(vec, m) {
+    .Call(`_tEDM_RcppCombn`, vec, m)
+}
+
+RcppGenSubsets <- function(vec) {
+    .Call(`_tEDM_RcppGenSubsets`, vec)
 }
 
 RcppDigamma <- function(x) {
@@ -147,6 +135,10 @@ RcppSumNormalize <- function(vec, NA_rm = FALSE) {
 
 RcppArithmeticSeq <- function(from, to, length_out) {
     .Call(`_tEDM_RcppArithmeticSeq`, from, to, length_out)
+}
+
+RcppQuantile <- function(vec, probs, NA_rm = TRUE) {
+    .Call(`_tEDM_RcppQuantile`, vec, probs, NA_rm)
 }
 
 RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
@@ -235,5 +227,25 @@ RcppSVD <- function(X) {
 
 RcppDeLongPlacements <- function(cases, controls, direction) {
     .Call(`_tEDM_RcppDeLongPlacements`, cases, controls, direction)
+}
+
+DetectMaxNumThreads <- function() {
+    .Call(`_tEDM_DetectMaxNumThreads`)
+}
+
+OptSimplexParm <- function(Emat) {
+    .Call(`_tEDM_OptSimplexParm`, Emat)
+}
+
+OptThetaParm <- function(Thetamat) {
+    .Call(`_tEDM_OptThetaParm`, Thetamat)
+}
+
+OptICparm <- function(Emat) {
+    .Call(`_tEDM_OptICparm`, Emat)
+}
+
+MatNotNAIndice <- function(mat, byrow = TRUE) {
+    .Call(`_tEDM_MatNotNAIndice`, mat, byrow)
 }
 

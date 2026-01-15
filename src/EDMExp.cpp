@@ -10,7 +10,7 @@
 #include "MVE.h"
 #include "FNN.h"
 #include "Forecast4TS.h"
-#include "IntersectionCardinality.h"
+#include "IntersectionalCardinality.h"
 #include "CCM.h"
 #include "PCM.h"
 #include "CMC.h"
@@ -18,7 +18,6 @@
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
-// [[Rcpp::depends(RcppArmadillo)]]
 
 // Wrapper function to perform trivariate logistic map
 // [[Rcpp::export(rng = false)]]
@@ -134,7 +133,8 @@ Rcpp::NumericVector RcppSimplexForecast(
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(source_std[pred[i] - 1]) &&
-        !std::isnan(target_std[pred[i] - 1])) {
+        !std::isnan(target_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
     }
   }
@@ -196,7 +196,8 @@ Rcpp::NumericVector RcppSMapForecast(
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(source_std[pred[i] - 1]) &&
-        !std::isnan(target_std[pred[i] - 1])) {
+        !std::isnan(target_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
     }
   }
@@ -217,9 +218,9 @@ Rcpp::NumericVector RcppSMapForecast(
   return Rcpp::wrap(pred_res);
 }
 
-// Wrapper function to compute the intersection cardinality curve
+// Wrapper function to compute the intersectional cardinality curve
 // [[Rcpp::export(rng = false)]]
-Rcpp::NumericVector RcppIntersectionCardinality(
+Rcpp::NumericVector RcppIntersectionalCardinality(
     const Rcpp::NumericVector& source,
     const Rcpp::NumericVector& target,
     int E,
@@ -261,7 +262,8 @@ Rcpp::NumericVector RcppIntersectionCardinality(
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(source_std[pred[i] - 1]) &&
-        !std::isnan(target_std[pred[i] - 1])){
+        !std::isnan(target_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)){
         pred_indices.push_back(static_cast<size_t>(pred[i] - 1)); // Convert to 0-based index
     }
   }
@@ -270,8 +272,8 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     Rcpp::stop("Library size must not exceed the number of nearest neighbors used for mapping.");
   }
 
-  // Call the IntersectionCardinality function
-  std::vector<double> res = IntersectionCardinality(
+  // Call the IntersectionalCardinality function
+  std::vector<double> res = IntersectionalCardinality(
     embedding_x,
     embedding_y,
     lib_indices,
@@ -426,13 +428,13 @@ Rcpp::NumericVector RcppFNN4TS(
   // Convert Rcpp *Vector to std::vector<*>
   std::vector<double> rt_std = Rcpp::as<std::vector<double>>(rt);
   std::vector<double> eps_std = Rcpp::as<std::vector<double>>(eps);
-  std::vector<int> lib_std;
-  std::vector<int> pred_std;
+  std::vector<size_t> lib_std;
+  std::vector<size_t> pred_std;
 
   // Generate embeddings
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   int max_E = *std::max_element(E_std.begin(), E_std.end());
-  int max_lag = (tau == 0) ? (max_E - 1) : ((max_E - 1) * tau);
+  int max_lag = (tau == 0) ? (max_E - 1) : ((max_E - 1) * tau); // Original logic for time-delay
   std::vector<std::vector<double>> embeddings = Embed(vec_std, max_E, tau);
 
   int validSampleNum = vec_std.size();
@@ -442,18 +444,18 @@ Rcpp::NumericVector RcppFNN4TS(
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
     }
     if (!std::isnan(vec_std[lib[i] - 1]) && (lib[i] > max_lag)) {
-      lib_std.push_back(lib[i] - 1);
+      lib_std.push_back(static_cast<size_t>(lib[i] - 1));
     }
   }
   for (int i = 0; i < pred.size(); ++i) {
     if (pred[i] < 1 || pred[i] > validSampleNum) {
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
-    if (!std::isnan(vec_std[pred[i] - 1])) {
-      pred_std.push_back(pred[i] - 1);
+    if (!std::isnan(vec_std[pred[i] - 1]) && (pred[i] > max_lag)) {
+      pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
   }
-  
+
   // Use L1 norm (Manhattan distance) if dist_metric == 1, else use L2 norm
   bool L1norm = (dist_metric == 1);
 
@@ -479,7 +481,7 @@ Rcpp::NumericMatrix RcppSimplex4TS(const Rcpp::NumericVector& source,
                                    const Rcpp::IntegerVector& pred,
                                    const Rcpp::IntegerVector& E,
                                    const Rcpp::IntegerVector& b,
-                                   int tau = 1,
+                                   const Rcpp::IntegerVector& tau,
                                    int dist_metric = 2,
                                    bool dist_average = true,
                                    int threads = 8) {
@@ -490,12 +492,14 @@ Rcpp::NumericMatrix RcppSimplex4TS(const Rcpp::NumericVector& source,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   // Initialize lib_indices and pred_indices
   std::vector<int> lib_indices;
   std::vector<int> pred_indices;
   int max_E = *std::max_element(E_std.begin(), E_std.end());
-  int max_lag = (tau == 0) ? (max_E - 1) : ((max_E - 1) * tau);
+  int max_tau = *std::max_element(tau_std.begin(), tau_std.end());
+  int max_lag = (max_tau == 0) ? (max_E - 1) : ((max_E - 1) * max_tau);
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -516,7 +520,8 @@ Rcpp::NumericMatrix RcppSimplex4TS(const Rcpp::NumericVector& source,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(source_std[pred[i] - 1]) &&
-        !std::isnan(target_std[pred[i] - 1])) {
+        !std::isnan(target_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
     }
   }
@@ -528,7 +533,7 @@ Rcpp::NumericMatrix RcppSimplex4TS(const Rcpp::NumericVector& source,
     pred_indices,
     E_std,
     b_std,
-    tau,
+    tau_std,
     dist_metric,
     dist_average,
     threads);
@@ -547,7 +552,7 @@ Rcpp::NumericMatrix RcppSimplex4TS(const Rcpp::NumericVector& source,
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "rho", "mae", "rmse");
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "tau", "rho", "mae", "rmse");
   return result;
 }
 
@@ -593,7 +598,8 @@ Rcpp::NumericMatrix RcppSMap4TS(const Rcpp::NumericVector& source,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(source_std[pred[i] - 1]) &&
-        !std::isnan(target_std[pred[i] - 1])) {
+        !std::isnan(target_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
     }
   }
@@ -637,7 +643,7 @@ Rcpp::NumericMatrix RcppMultiSimplex4TS(const Rcpp::NumericMatrix& source,
                                         const Rcpp::IntegerVector& pred,
                                         const Rcpp::IntegerVector& E,
                                         const Rcpp::IntegerVector& b,
-                                        int tau = 1,
+                                        const Rcpp::IntegerVector& tau,
                                         int dist_metric = 2,
                                         bool dist_average = true,
                                         int threads = 8) {
@@ -656,6 +662,7 @@ Rcpp::NumericMatrix RcppMultiSimplex4TS(const Rcpp::NumericMatrix& source,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   // Initialize lib_indices and pred_indices
   std::vector<int> lib_indices;
@@ -708,7 +715,7 @@ Rcpp::NumericMatrix RcppMultiSimplex4TS(const Rcpp::NumericMatrix& source,
     pred_indices,
     E_std,
     b_std,
-    tau,
+    tau_std,
     dist_metric,
     dist_average,
     threads);
@@ -727,7 +734,7 @@ Rcpp::NumericMatrix RcppMultiSimplex4TS(const Rcpp::NumericMatrix& source,
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "rho", "mae", "rmse");
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "tau", "rho", "mae", "rmse");
   return result;
 }
 
@@ -739,7 +746,7 @@ Rcpp::NumericMatrix RcppIC4TS(const Rcpp::NumericVector& source,
                               const Rcpp::IntegerVector& pred,
                               const Rcpp::IntegerVector& E,
                               const Rcpp::IntegerVector& b,
-                              int tau = 1,
+                              const Rcpp::IntegerVector& tau,
                               int exclude = 0,
                               int dist_metric = 2,
                               int threads = 8,
@@ -748,10 +755,12 @@ Rcpp::NumericMatrix RcppIC4TS(const Rcpp::NumericVector& source,
   std::vector<double> source_std = Rcpp::as<std::vector<double>>(source);
   std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
 
-  // Convert Rcpp::IntegerVector to std::vector<int>
+  // Convert Rcpp::IntegerVector to std::vector<int> and compute max lag
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   int max_E = *std::max_element(E_std.begin(), E_std.end());
-  int max_lag = (tau == 0) ? (max_E - 1) : ((max_E - 1) * tau);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
+  int max_tau = *std::max_element(tau_std.begin(), tau_std.end());
+  int max_lag = (max_tau == 0) ? (max_E - 1) : ((max_E - 1) * max_tau);
 
   // Initialize lib_indices and pred_indices
   std::vector<size_t> lib_indices;
@@ -776,7 +785,8 @@ Rcpp::NumericMatrix RcppIC4TS(const Rcpp::NumericVector& source,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(source_std[pred[i] - 1]) &&
-        !std::isnan(target_std[pred[i] - 1])) {
+        !std::isnan(target_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_indices.push_back(static_cast<size_t>(pred[i] - 1)); // Convert to 0-based index
     }
   }
@@ -797,7 +807,7 @@ Rcpp::NumericMatrix RcppIC4TS(const Rcpp::NumericVector& source,
     pred_indices,
     E_std,
     b_std,
-    tau,
+    tau_std,
     exclude,
     dist_metric,
     threads,
@@ -817,7 +827,7 @@ Rcpp::NumericMatrix RcppIC4TS(const Rcpp::NumericVector& source,
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "CausalScore", "Significance");
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "tau", "CausalScore", "Significance");
   return result;
 }
 
@@ -866,7 +876,8 @@ Rcpp::NumericMatrix RcppCCM(const Rcpp::NumericVector& x,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(x_std[pred[i] - 1]) &&
-        !std::isnan(y_std[pred[i] - 1])) {
+        !std::isnan(y_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_std.push_back(pred[i] - 1);
     }
   }
@@ -887,6 +898,7 @@ Rcpp::NumericMatrix RcppCCM(const Rcpp::NumericVector& x,
     parallel_level,
     dist_metric,
     dist_average,
+    true,
     progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
@@ -902,7 +914,7 @@ Rcpp::NumericMatrix RcppCCM(const Rcpp::NumericVector& x,
   // Set column names for the result matrix
   Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("libsizes",
                  "x_xmap_y_mean","x_xmap_y_sig",
-                 "x_xmap_y_upper","x_xmap_y_lower");
+                 "x_xmap_y_lower","x_xmap_y_upper");
   return resultMatrix;
 }
 
@@ -973,7 +985,8 @@ Rcpp::NumericMatrix RcppPCM(const Rcpp::NumericVector& x,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(x_std[pred[i] - 1]) &&
-        !std::isnan(y_std[pred[i] - 1])) {
+        !std::isnan(y_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_std.push_back(pred[i] - 1);
     }
   }
@@ -996,6 +1009,7 @@ Rcpp::NumericMatrix RcppPCM(const Rcpp::NumericVector& x,
     cumulate,
     dist_metric,
     dist_average,
+    true,
     progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
@@ -1015,8 +1029,8 @@ Rcpp::NumericMatrix RcppPCM(const Rcpp::NumericVector& x,
   // Set column names for the result matrix
   Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create(
     "libsizes","T_mean","D_mean",
-    "T_sig","T_upper","T_lower",
-    "D_sig","D_upper","D_lower");
+    "T_sig","T_lower","T_upper",
+    "D_sig","D_lower","D_upper");
   return resultMatrix;
 }
 
@@ -1068,7 +1082,8 @@ Rcpp::List RcppCMC(
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(x_std[pred[i] - 1]) &&
-        !std::isnan(y_std[pred[i] - 1])) {
+        !std::isnan(y_std[pred[i] - 1]) &&
+        (pred[i] > max_lag)) {
       pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
   }
@@ -1106,8 +1121,8 @@ Rcpp::List RcppCMC(
     Rcpp::Named("neighbors") = res.cross_mapping[0],
     Rcpp::Named("x_xmap_y_mean") = res.cross_mapping[1],
     Rcpp::Named("x_xmap_y_sig") = res.cross_mapping[2],
-    Rcpp::Named("x_xmap_y_upper") = res.cross_mapping[3],
-    Rcpp::Named("x_xmap_y_lower")  = res.cross_mapping[4]
+    Rcpp::Named("x_xmap_y_lower") = res.cross_mapping[3],
+    Rcpp::Named("x_xmap_y_upper")  = res.cross_mapping[4]
   );
 
   return Rcpp::List::create(
@@ -1122,6 +1137,7 @@ Rcpp::List RcppCMC(
 Rcpp::NumericMatrix RcppMultispatialCCM(const Rcpp::NumericMatrix& x,
                                         const Rcpp::NumericMatrix& y,
                                         const Rcpp::IntegerVector& libsizes,
+                                        const Rcpp::IntegerVector& lib,
                                         int E = 3,
                                         int tau = 0,
                                         int b = 4,
@@ -1147,11 +1163,22 @@ Rcpp::NumericMatrix RcppMultispatialCCM(const Rcpp::NumericMatrix& x,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
 
+  int validSampleNum = x.ncol();
+  // Convert and check that lib indices are within bounds & convert R based 1 index to C++ based 0 index
+  std::vector<int> lib_std;
+  for (int i = 0; i < lib.size(); ++i) {
+    if (lib[i] < 1 || lib[i] > validSampleNum) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
+    lib_std.push_back(lib[i] - 1);
+  }
+
   // Perform multispatial convergent cross mapping
   std::vector<std::vector<double>> result = MultispatialCCM(
     x_std,
     y_std,
     libsizes_std,
+    lib_std,
     E,
     tau,
     b,
@@ -1176,6 +1203,6 @@ Rcpp::NumericMatrix RcppMultispatialCCM(const Rcpp::NumericMatrix& x,
   // Set column names for the result matrix
   Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("libsizes",
                  "x_xmap_y_mean","x_xmap_y_sig",
-                 "x_xmap_y_upper","x_xmap_y_lower");
+                 "x_xmap_y_lower","x_xmap_y_upper");
   return resultMatrix;
 }

@@ -11,7 +11,7 @@
   effect,
   libsizes = NULL,
   E = 3,
-  tau = 0,
+  tau = 1,
   k = E + 1,
   theta = 1,
   algorithm = "simplex",
@@ -64,7 +64,7 @@
 A list
 \describe{
 \item{\code{xmap}}{cross mapping results}
-\item{\code{varname}}{names of causal and effect variable}
+\item{\code{varname}}{names of causal and effect variables}
 \item{\code{bidirectional}}{whether to examine bidirectional causality}
 }
 }

@@ -32,9 +32,9 @@
 #' @param E (optional) embedding dimensions.
 #' @param tau (optional) step of time lags.
 #' @param k (optional) number of nearest neighbors.
-#' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
+#' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param threads (optional) number of threads to use.
 #' @param parallel.level (optional) level of parallelism, `low` or `high`.
 #' @param bidirectional (optional) whether to examine bidirectional causality.
@@ -44,7 +44,7 @@
 #' \describe{
 #' \item{\code{xmap}}{cross mapping results}
 #' \item{\code{cs}}{causal strength}
-#' \item{\code{varname}}{names of causal and effect variable}
+#' \item{\code{varname}}{names of causal and effect variables}
 #' \item{\code{bidirectional}}{whether to examine bidirectional causality}
 #' }
 #' @export

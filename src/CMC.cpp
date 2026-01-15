@@ -4,14 +4,13 @@
 #include <numeric>
 #include <limits>
 #include <utility>
+#include <map>
 #include <unordered_set>
 #include "CppStats.h"
 #include "CppDistances.h"
-#include "tEDMDataStruct.h"
-#include "IntersectionCardinality.h"
+#include "DataStruct.h"
+#include "IntersectionalCardinality.h"
 #include <RcppThread.h>
-
-// [[Rcpp::depends(RcppThread)]]
 
 /**
  * @brief Computes the Cross Mapping Cardinality (CMC) causal strength score.
@@ -104,7 +103,7 @@ CMCRes CMC(
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level
@@ -113,7 +112,7 @@ CMCRes CMC(
       }
     } else {
       for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level
@@ -124,7 +123,7 @@ CMCRes CMC(
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level
@@ -133,7 +132,7 @@ CMCRes CMC(
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level

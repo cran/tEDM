@@ -10,9 +10,14 @@
 #include <unordered_set>
 #include "CppStats.h"
 #include "CppDistances.h"
-#include "tEDMDataStruct.h"
-#include "IntersectionCardinality.h"
-#include <RcppThread.h>
+#include "DataStruct.h"
+#include "IntersectionalCardinality.h"
+
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
+// #include <RcppThread.h>
 
 /**
  * @brief Computes the Cross Mapping Cardinality (CMC) causal strength score.

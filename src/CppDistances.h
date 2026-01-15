@@ -7,7 +7,14 @@
 #include <numeric>
 #include <limits>
 #include <utility>
-#include <RcppThread.h>
+#include <stdexcept>
+#include "NumericUtils.h"
+
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
+// #include <RcppThread.h>
 
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
@@ -50,13 +57,15 @@ std::vector<size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,
     size_t target_idx,
     size_t k,
-    const std::vector<int>& lib);
+    const std::vector<int>& lib,
+    bool include_self = false);
 
 std::vector<size_t> CppDistKNNIndice(
     const std::vector<std::vector<double>>& dist_mat,
     size_t target_idx,
     size_t k,
-    const std::vector<int>& lib);
+    const std::vector<int>& lib,
+    bool include_self = false);
 
 std::vector<std::vector<size_t>> CppDistSortedIndice(
     const std::vector<std::vector<double>>& dist_mat,
@@ -69,6 +78,7 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
     const std::vector<size_t>& lib,
     size_t k,
     size_t threads,
-    bool L1norm = false);
+    bool L1norm = false,
+    bool include_self = false);
 
 #endif // CppDistances_H

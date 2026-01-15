@@ -9,8 +9,12 @@
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
 #include "DeLongPlacements.h"
-// #include <Rcpp.h>
-#include <RcppArmadillo.h>
+
+// Note: <RcppArmadillo.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
+// #include <RcppArmadillo.h>
 
 bool isNA(double value);
 
@@ -60,6 +64,10 @@ std::vector<double> CppSumNormalize(const std::vector<double>& vec,
                                     bool NA_rm = false);
 
 std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out);
+
+std::vector<double> CppQuantile(const std::vector<double>& vec,
+                                const std::vector<double>& probs = {0.05, 0.5, 0.95},
+                                bool NA_rm = true);
 
 double CppVariance(const std::vector<double>& vec, bool NA_rm = false);
 

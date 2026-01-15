@@ -10,7 +10,12 @@
 #include "CppStats.h"
 #include "Embed.h"
 #include "SimplexProjection.h"
-#include <RcppThread.h>
+
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
+// #include <RcppThread.h>
 
 /*
  * Perform bootstrapped simplex prediction from spatially replicated short time series.
@@ -19,11 +24,12 @@
  * Parameters:
  *   source         - A vector of vectors representing explanatory variables (plots × time).
  *   target         - A vector of vectors representing response variables (plots × time).
+ *   libsize        - Number of plots to sample in each bootstrap replicate.
+ *   lib_indices    - Vector of indices indicating which plots to include when searching for neighbors.
  *   E              - Embedding dimension.
  *   tau            - Time delay.
- *   lib            - Number of plots to sample in each bootstrap replicate.
  *   num_neighbors  - Number of nearest neighbors to use in simplex projection.
- *   threads        - Number of nearest neighbors to use in bootstrap replicates.
+ *   threads        - Number of paralleled threads to use in bootstrap replicates.
  *   seed           - Random seed for reproducibility.
  *   boot           - Number of bootstrap replicates.
  *   parallel_level - If 0, run in parallel using RcppThread. Otherwise, run sequentially.
@@ -35,18 +41,19 @@
  *     [0] = library size (libsize)
  *     [1] = mean of Pearson correlation (mean rho)
  *     [2] = one-sided p-value (proportion of rho ≤ 0)
- *     [3] = 97.5% percentile (upper bound of 95% CI)
- *     [4] = 2.5% percentile (lower bound of 95% CI)
+ *     [3] = 2.5% percentile (lower bound of 95% CI)
+ *     [4] = 97.5% percentile (upper bound of 95% CI)
  */
 std::vector<double> SimplexPredictionBoot(
     const std::vector<std::vector<double>>& source,
     const std::vector<std::vector<double>>& target,
-    int E,
-    int tau,
-    int lib,
-    int num_neighbors,
-    int boot,
-    size_t threads,
+    int libsize,
+    const std::vector<int>& lib_indices,
+    int E = 3,
+    int tau = 1,
+    int num_neighbors = 4,
+    int boot = 1,
+    size_t threads = 8,
     unsigned int seed = 42,
     int parallel_level = 0,
     int dist_metric = 2,
@@ -69,6 +76,7 @@ std::vector<double> SimplexPredictionBoot(
  *   x              - A vector of vectors representing explanatory variables (plots × time).
  *   y              - A vector of vectors representing response variables (plots × time).
  *   lib_sizes      - A list of library sizes to evaluate (number of plots to sample).
+ *   lib            - A vector of representing the indices of sample plots to be the library.
  *   E              - Embedding dimension for state space reconstruction.
  *   tau            - Time delay between lags in the embedding.
  *   b              - Number of nearest neighbors used in simplex projection (defaults to E + 1).
@@ -85,18 +93,19 @@ std::vector<double> SimplexPredictionBoot(
  *     [0] = library size (libsize)
  *     [1] = mean of Pearson correlation (mean rho)
  *     [2] = one-sided p-value (proportion of rho ≤ 0 across bootstraps)
- *     [3] = 97.5% percentile of rho distribution (upper CI bound)
- *     [4] = 2.5% percentile of rho distribution (lower CI bound)
+ *     [3] = 2.5% percentile of rho distribution (lower CI bound)
+ *     [4] = 97.5% percentile of rho distribution (upper CI bound)
  */
 std::vector<std::vector<double>> MultispatialCCM(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
     const std::vector<int>& lib_sizes,
-    int E,
-    int tau,
-    int b,
-    int boot,
-    int threads,
+    const std::vector<int>& lib,
+    int E = 3,
+    int tau = 1,
+    int b = 4,
+    int boot = 1,
+    int threads = 8,
     unsigned int seed = 42,
     int parallel_level = 0,
     int dist_metric = 2,

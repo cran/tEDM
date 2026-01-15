@@ -64,7 +64,7 @@
     colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean")
   } else {
     colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean","y_xmap_x_sig",
-                           "y_xmap_x_upper","y_xmap_x_lower")
+                           "y_xmap_x_lower","y_xmap_x_upper")
   }
   y_xmap_x = as.data.frame(y_xmap_x)
 
@@ -73,7 +73,7 @@
       colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean")
     } else {
       colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean","x_xmap_y_sig",
-                             "x_xmap_y_upper","x_xmap_y_lower")
+                             "x_xmap_y_lower","x_xmap_y_upper")
     }
     x_xmap_y = as.data.frame(x_xmap_y)
     resdf = x_xmap_y |>
@@ -107,8 +107,9 @@
   txmap = .internal_xmapdf_binding(txxmapy,tyxmapx,bidirectional)
   dxmap = .internal_xmapdf_binding(dxxmapy,dyxmapx,bidirectional)
 
-  res = list("pxmap" = dxmap, "xmap" = txmap,
-             "varname" = varname[1:2],
+  res = list("pxmap" = dxmap,
+             "xmap" = txmap,
+             "varname" = varname,
              "bidirectional" = bidirectional)
   class(res) = 'pcm_res'
   return(res)
@@ -122,9 +123,8 @@
   return(res)
 }
 
-.bind_xmapself = \(x,varname,method,tau = NULL,...){
+.bind_xmapself = \(x,varname,method,...){
   res = list("xmap" = as.data.frame(x),"varname" = varname,"method" = method)
-  if (!is.null(tau)) res = append(res,c("tau" = tau))
   class(res) = "xmap_self"
   return(res)
 }

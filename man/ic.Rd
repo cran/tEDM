@@ -3,7 +3,7 @@
 \name{ic}
 \alias{ic}
 \alias{ic,data.frame-method}
-\title{intersection cardinality}
+\title{optimal parameter search for intersectional cardinality}
 \usage{
 \S4method{ic}{data.frame}(
   data,
@@ -48,11 +48,10 @@ A list
 \item{\code{xmap}}{cross mapping performance}
 \item{\code{varname}}{name of target variable}
 \item{\code{method}}{method of cross mapping}
-\item{\code{tau}}{step of time lag}
 }
 }
 \description{
-intersection cardinality
+optimal parameter search for intersectional cardinality
 }
 \examples{
 sim = logistic_map(x = 0.4,y = 0.4,step = 45,beta_xy = 0.5,beta_yx = 0)

@@ -9,10 +9,10 @@
   if (threads == 0) threads = length(pred)
 
   res = RcppIC4TS(vx,vy,lib,pred,E,k,tau,0,.check_distmetric(dist.metric),threads,pl)
-  return(.bind_xmapself(res,target,"ic",tau))
+  return(.bind_xmapself(res,target,"ic"))
 }
 
-#' intersection cardinality
+#' optimal parameter search for intersectional cardinality
 #'
 #' @inheritParams simplex
 #' @param parallel.level (optional) level of parallelism, `low` or `high`.
@@ -22,7 +22,6 @@
 #' \item{\code{xmap}}{cross mapping performance}
 #' \item{\code{varname}}{name of target variable}
 #' \item{\code{method}}{method of cross mapping}
-#' \item{\code{tau}}{step of time lag}
 #' }
 #' @export
 #' @name ic

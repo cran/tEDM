@@ -12,8 +12,13 @@
 #include "Embed.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
-#include "tEDMDataStruct.h"
-#include <RcppThread.h>
+#include "DataStruct.h"
+
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
+// #include <RcppThread.h>
 
 /**
  * @brief Computes the partial correlation between the target variable and its simplex projection,
@@ -154,6 +159,7 @@ std::vector<PartialCorRes> PCMSingle(
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
+ * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
  * Returns:
@@ -161,12 +167,12 @@ std::vector<PartialCorRes> PCMSingle(
  *      - The library size.
  *      - The mean pearson cross-mapping correlation.
  *      - The statistical significance of the pearson correlation.
- *      - The upper bound of the pearson correlation confidence interval.
  *      - The lower bound of the pearson correlation confidence interval.
+ *      - The upper bound of the pearson correlation confidence interval.
  *      - The mean partial cross-mapping partial correlation.
  *      - The statistical significance of the partial correlation.
- *      - The upper bound of the partial correlation confidence interval.
  *      - The lower bound of the partial correlation confidence interval.
+ *      - The upper bound of the partial correlation confidence interval.
  */
 std::vector<std::vector<double>> PCM(
     const std::vector<double>& x,                       // Time series to cross map from
@@ -185,6 +191,7 @@ std::vector<std::vector<double>> PCM(
     bool cumulate,                                      // Whether to cumulate the partial correlations
     int dist_metric,                                    // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                  // Whether to average distance by the number of valid vector components
+    bool single_sig,                                    // Whether to estimate significance and confidence intervals using a single rho value
     bool progressbar                                    // Whether to print the progress bar
 );
 
